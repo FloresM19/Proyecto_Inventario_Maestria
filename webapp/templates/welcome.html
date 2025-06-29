@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Bienvenido - Sistema de Inventario{% endblock %}
+
+{% block content %}
+<h2>¡Bienvenido al Sistema!</h2>
+
+<div>
+    <p><strong>Login exitoso:</strong> {{ session.nombre_completo }}</p>
+    <p><strong>Tipo de usuario:</strong> {{ session.tipo_usuario }}</p>
+</div>
+
+<p><strong>API disponible en:</strong> <a href="http://localhost:8000/docs" target="_blank">http://localhost:8000/docs</a></p>
+{% endblock %}

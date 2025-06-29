@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Sistema de Inventario{% endblock %}
+
+{% block content %}
+<h2>Iniciar Sesión</h2>
+
+<form method="POST" action="{{ url_for('login') }}">
+    <table>
+        <tr>
+            <td><label for="username">Usuario:</label></td>
+            <td><input type="text" id="username" name="username" required></td>
+        </tr>
+        <tr>
+            <td><label for="password">Contraseña:</label></td>
+            <td><input type="password" id="password" name="password" required></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Iniciar Sesión"></td>
+        </tr>
+    </table>
+</form>
+
+<h3>Usuarios de Prueba:</h3>
+<table border="1">
+    <tr>
+        <th>Usuario</th>
+        <th>Contraseña</th>
+        <th>Tipo</th>
+    </tr>
+    <tr>
+        <td>admin</td>
+        <td>admin123</td>
+        <td>Administrador</td>
+    </tr>
+    
+    <tr>
+        <td>estudiante1</td>
+        <td>est123</td>
+        <td>Estudiante</td>
+    </tr>
+</table>
+{% endblock %}
