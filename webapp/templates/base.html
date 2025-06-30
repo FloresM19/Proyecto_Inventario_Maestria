@@ -7,10 +7,11 @@
 </head>
 <body>
     <h1>Sistema de Inventario y Préstamo de Equipos de Laboratorio</h1>
-    
+
     {% if session.user_id %}
     <nav>
         <p><strong>Usuario:</strong> {{ session.username }} ({{ session.tipo_usuario }})</p>
+        <a href="{{ url_for('equipos') }}">Equipos</a> |
         <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
     </nav>
     <hr>
@@ -28,10 +29,10 @@
     <main>
         {% block content %}{% endblock %}
     </main>
-    
+
     <hr>
     <footer>
-        <p>Maestría - Sistema de Inventario de Laboratorio - 2025</p>
+        <p>Maestría - Sistema de Inventario de Laboratorio - Versión 2.0 - 2025</p>
     </footer>
 </body>
 </html>

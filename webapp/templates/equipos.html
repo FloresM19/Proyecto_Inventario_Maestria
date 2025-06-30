@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Equipos - Sistema de Inventario{% endblock %}
+
+{% block content %}
+<h2>Equipos de Laboratorio</h2>
+
+{% if session.tipo_usuario == 'admin' %}
+<h3>Agregar Nuevo Equipo</h3>
+<form method="POST" action="{{ url_for('agregar_equipo') }}">
+    <table>
+        <tr>
+            <td><label for="nombre">Nombre:</label></td>
+            <td><input type="text" id="nombre" name="nombre" required placeholder="Ej: Cable HDMI 2m"></td>
+        </tr>
+        <tr>
+            <td><label for="estado">Estado:</label></td>
+            <td>
+                <select id="estado" name="estado" required>
+                    <option value="">Seleccionar estado</option>
+                    <option value="disponible">Disponible</option>
+                    <option value="prestado">Prestado</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="descripcion">Descripción:</label></td>
+            <td><textarea id="descripcion" name="descripcion" placeholder="Descripción del equipo (opcional)"></textarea></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Agregar Equipo"></td>
+        </tr>
+    </table>
+</form>
+<hr>
+{% endif %}
+
+<!-- La tabla SIEMPRE se muestra, tanto para admin como para estudiante -->
+<h3>Lista de Equipos</h3>
+
+{% if equipos %}
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Estado</th>
+        <th>Descripción</th>
+        {% if session.tipo_usuario == 'admin' %}
+        <th>Acciones</th>
+        {% endif %}
+    </tr>
+    {% for equipo in equipos %}
+    <tr>
+        <td>{{ equipo.id }}</td>
+        <td>{{ equipo.nombre }}</td>
+        <td>
+            {% if equipo.estado == 'disponible' %}
+            <span style="color: green; font-weight: bold;">Disponible</span>
+            {% elif equipo.estado == 'prestado' %}
+            <span style="color: orange; font-style: italic;">Prestado</span>
+            {% else %}
+            {{ equipo.estado }}
+            {% endif %}
+        </td>
+        <td>{{ equipo.descripcion or '-' }}</td>
+        {% if session.tipo_usuario == 'admin' %}
+        <td>
+            <a href="{{ url_for('editar_equipo', id=equipo.id) }}">Editar</a> |
+            <a href="{{ url_for('eliminar_equipo', id=equipo.id) }}"
+               onclick="return confirm('¿Estás seguro de eliminar este equipo?')">Eliminar</a>
+        </td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No hay equipos registrados en el sistema.</p>
+{% endif %}
+
+<h3>Leyenda de Estados</h3>
+<ul>
+    <li><span style="color: green; font-weight: bold;">Disponible:</span> Equipo listo para préstamo</li>
+    <li><span style="color: orange; font-style: italic;">Prestado:</span> Equipo actualmente en préstamo</li>
+</ul>
+
+<h3>Estadísticas Rápidas</h3>
+<div>
+    <p><strong>Total de equipos:</strong> {{ equipos|length if equipos else 0 }}</p>
+    {% if equipos %}
+    <p><strong>Disponibles:</strong> {{ equipos|selectattr('estado', 'equalto', 'disponible')|list|length }}</p>
+    <p><strong>Prestados:</strong> {{ equipos|selectattr('estado', 'equalto', 'prestado')|list|length }}</p>
+    {% endif %}
+</div>
+{% endblock %}
