@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+ 
+{% block title %}Préstamos - Sistema de Inventario{% endblock %}
+ 
+{% block content %}
+<h2>Sistema de Préstamos</h2>
+ 
+<h3>Solicitar Nuevo Préstamo</h3>
+ 
+{% if equipos_disponibles %}
+<form method="POST" action="{{ url_for('solicitar_prestamo') }}">
+<table>
+<tr>
+<td><label for="equipo_id">Equipo:</label></td>
+<td>
+<select id="equipo_id" name="equipo_id" required>
+<option value="">Seleccionar equipo</option>
+                    {% for equipo in equipos_disponibles %}
+<option value="{{ equipo.id }}">
+                        {{ equipo.nombre }} - {{ equipo.descripcion or 'Sin descripción' }}
+</option>
+                    {% endfor %}
+</select>
+</td>
+</tr>
+<tr>
+<td><label for="motivo">Motivo del préstamo:</label></td>
+<td>
+<textarea id="motivo" name="motivo" required placeholder="Describe para qué necesitas el equipo..."></textarea>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><input type="submit" value="Solicitar Préstamo"></td>
+</tr>
+</table>
+</form>
+{% else %}
+<p>No hay equipos disponibles para préstamo en este momento.</p>
+{% endif %}
+ 
+<hr>
+ 
+<h3>Mis Préstamos Activos</h3>
+ 
+{% if mis_prestamos %}
+<table border="1">
+<tr>
+<th>ID</th>
+<th>Equipo</th>
+<th>Fecha Préstamo</th>
+<th>Motivo</th>
+<th>Estado</th>
+<th>Acciones</th>
+</tr>
+    {% for prestamo in mis_prestamos %}
+    {% if not prestamo.fecha_devolucion %}
+<tr>
+<td>{{ prestamo.id }}</td>
+<td>{{ prestamo.equipo_nombre }}</td>
+<td>{{ prestamo.fecha_prestamo }}</td>
+<td>{{ prestamo.motivo }}</td>
+<td><strong>Activo</strong></td>
+<td>
+<a href="{{ url_for('devolver_equipo', prestamo_id=prestamo.id) }}"
+               onclick="return confirm('¿Estás seguro de devolver este equipo?')">
+               Devolver
+</a>
+</td>
+</tr>
+    {% endif %}
+    {% endfor %}
+</table>
+{% else %}
+<p>No tienes préstamos activos.</p>
+{% endif %}
+ 
+<h3>Equipos Disponibles</h3>
+ 
+{% if equipos_disponibles %}
+<table border="1">
+<tr>
+<th>ID</th>
+<th>Nombre</th>
+<th>Descripción</th>
+<th>Estado</th>
+</tr>
+    {% for equipo in equipos_disponibles %}
+<tr>
+<td>{{ equipo.id }}</td>
+<td>{{ equipo.nombre }}</td>
+<td>{{ equipo.descripcion or 'Sin descripción' }}</td>
+<td>{{ equipo.estado }}</td>
+</tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No hay equipos disponibles para mostrar.</p>
+{% endif %}
+{% endblock %}

@@ -1,6 +1,6 @@
 -- Sistema de Inventario y Préstamo de Equipos de Laboratorio
--- Versión 2.0: Login + Gestión de Equipos - Script de inicialización de la base de datos
-
+-- Versión 3.0: Login + Gestión de Equipos + Préstamos - Script de inicialización de la base de datos
+ 
 -- Tabla de usuarios
 CREATE TABLE IF NOT EXISTS usuarios (
     id SERIAL PRIMARY KEY,
@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
     activo BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
--- Tabla de equipos de laboratorio - NUEVA EN V2.0
+ 
+-- Tabla de equipos de laboratorio
 CREATE TABLE IF NOT EXISTS equipos (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -21,14 +21,29 @@ CREATE TABLE IF NOT EXISTS equipos (
     descripcion TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
+ 
+-- Tabla de préstamos - NUEVA EN V3.0
+CREATE TABLE IF NOT EXISTS prestamos (
+    id SERIAL PRIMARY KEY,
+    equipo_id INTEGER REFERENCES equipos(id),
+    usuario_id INTEGER REFERENCES usuarios(id),
+    fecha_prestamo TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_devolucion_esperada DATE,
+    fecha_devolucion_real TIMESTAMP NULL,
+    motivo_prestamo TEXT,
+    estado VARCHAR(20) DEFAULT 'activo', -- activo, devuelto
+    observaciones_prestamo TEXT,
+    observaciones_devolucion TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+ 
 -- Insertar usuarios de prueba
 INSERT INTO usuarios (username, password, nombre_completo, email, tipo_usuario) VALUES
 ('admin', 'admin123', 'Administrador del Sistema', 'admin@laboratorio.edu', 'admin'),
 ('profesor1', 'prof123', 'Dr. Juan Pérez', 'jperez@laboratorio.edu', 'profesor'),
 ('estudiante1', 'est123', 'María González', 'mgonzalez@estudiantes.edu', 'estudiante');
-
--- Insertar equipos de prueba - NUEVO EN V2.0
+ 
+-- Insertar equipos de prueba
 INSERT INTO equipos (nombre, descripcion, estado) VALUES
 ('Cable HDMI 2m', 'Cable HDMI de 2 metros para conexiones', 'disponible'),
 ('Cable HDMI 5m', 'Cable HDMI de 5 metros para conexiones largas', 'disponible'),
@@ -39,7 +54,9 @@ INSERT INTO equipos (nombre, descripcion, estado) VALUES
 ('Adaptador USB-C a HDMI', 'Adaptador para conectar dispositivos USB-C', 'disponible'),
 ('Micrófono inalámbrico', 'Micrófono para presentaciones', 'disponible'),
 ('Cámara web HD', 'Cámara para videoconferencias', 'disponible');
-
+ 
 -- Crear índices para mejorar rendimiento
 CREATE INDEX idx_usuarios_username ON usuarios(username);
 CREATE INDEX idx_equipos_estado ON equipos(estado);
+CREATE INDEX idx_prestamos_estado ON prestamos(estado);
+CREATE INDEX idx_prestamos_fecha ON prestamos(fecha_prestamo);
