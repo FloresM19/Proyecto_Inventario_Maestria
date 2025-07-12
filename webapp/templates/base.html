@@ -1,37 +1,40 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{% block title %}Sistema de Inventario - Laboratorio{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Inventario - Laboratorio{% endblock %}</title>
 </head>
 <body>
-<h1>Sistema de Inventario y Préstamo de Equipos de Laboratorio</h1>
+    <h1>Sistema de Inventario y Préstamo de Equipos de Laboratorio</h1>
+
     {% if session.user_id %}
-<nav>
-<p><strong>Usuario:</strong> {{ session.username }} ({{ session.tipo_usuario }})</p>
-<a href="{{ url_for('equipos') }}">Equipos</a> |
-<a href="{{ url_for('prestamos') }}">Préstamos</a> |
-<a href="{{ url_for('logout') }}">Cerrar Sesión</a>
-</nav>
-<hr>
+    <nav>
+        <p><strong>Usuario:</strong> {{ session.username }} ({{ session.tipo_usuario }})</p>
+        <a href="{{ url_for('equipos') }}">Equipos</a> |
+        <a href="{{ url_for('prestamos') }}">Préstamos</a> |
+        <a href="{{ url_for('historial') }}">Historial</a> |
+        <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
+    </nav>
+    <hr>
     {% endif %}
- 
+
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     {% for category, message in messages %}
-<p><strong>{{ category.upper() }}:</strong> {{ message }}</p>
+    <p><strong>{{ category.upper() }}:</strong> {{ message }}</p>
     {% endfor %}
-<hr>
+    <hr>
     {% endif %}
     {% endwith %}
- 
+
     <main>
         {% block content %}{% endblock %}
-</main>
-<hr>
-<footer>
-<p>Maestría - Sistema de Inventario de Laboratorio - Versión 3.0 - 2025</p>
-</footer>
+    </main>
+
+    <hr>
+    <footer>
+        <p>Maestría - Sistema de Inventario de Laboratorio - Versión 4.0 - 2025</p>
+    </footer>
 </body>
 </html>

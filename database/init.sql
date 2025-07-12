@@ -1,5 +1,5 @@
 -- Sistema de Inventario y Préstamo de Equipos de Laboratorio
--- Versión 3.0: Login + Gestión de Equipos + Préstamos - Script de inicialización de la base de datos
+-- Versión 4.0: Login + Gestión de Equipos + Préstamos + Historial - Script de inicialización de la base de datos
  
 -- Tabla de usuarios
 CREATE TABLE IF NOT EXISTS usuarios (
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS equipos (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
  
--- Tabla de préstamos - NUEVA EN V3.0
+-- Tabla de préstamos
 CREATE TABLE IF NOT EXISTS prestamos (
     id SERIAL PRIMARY KEY,
     equipo_id INTEGER REFERENCES equipos(id),
@@ -35,6 +35,17 @@ CREATE TABLE IF NOT EXISTS prestamos (
     observaciones_prestamo TEXT,
     observaciones_devolucion TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+ 
+-- Tabla de historial de cambios de estado - NUEVA EN V4.0
+CREATE TABLE IF NOT EXISTS historial_equipos (
+    id SERIAL PRIMARY KEY,
+    equipo_id INTEGER REFERENCES equipos(id),
+    estado_anterior VARCHAR(20),
+    estado_nuevo VARCHAR(20),
+    usuario_responsable INTEGER REFERENCES usuarios(id),
+    motivo TEXT,
+    fecha_cambio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
  
 -- Insertar usuarios de prueba
@@ -60,3 +71,7 @@ CREATE INDEX idx_usuarios_username ON usuarios(username);
 CREATE INDEX idx_equipos_estado ON equipos(estado);
 CREATE INDEX idx_prestamos_estado ON prestamos(estado);
 CREATE INDEX idx_prestamos_fecha ON prestamos(fecha_prestamo);
+CREATE INDEX idx_historial_equipo ON historial_equipos(equipo_id);
+CREATE INDEX idx_historial_fecha ON historial_equipos(fecha_cambio);
+
+ 

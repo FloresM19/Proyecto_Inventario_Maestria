@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Historial - Sistema de Inventario{% endblock %}
+
+{% block content %}
+<h2>{{ titulo }}</h2>
+
+{% if session.tipo_usuario == 'admin' %}
+<p><strong>Modo Administrador:</strong> Viendo historial completo del sistema</p>
+{% else %}
+<p><strong>Mi Historial Personal:</strong> Solo cambios relacionados con mis préstamos</p>
+{% endif %}
+
+{% if historial %}
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Equipo</th>
+        <th>Estado Anterior</th>
+        <th>Estado Nuevo</th>
+        {% if session.tipo_usuario == 'admin' %}
+        <th>Usuario</th>
+        {% endif %}
+        <th>Motivo</th>
+        <th>Fecha</th>
+    </tr>
+    {% for registro in historial %}
+    <tr>
+        <td>{{ registro.id }}</td>
+        <td>{{ registro.equipo_nombre }}</td>
+        <td>
+            {% if registro.estado_anterior == 'disponible' %}
+            <span style="color: green;">Disponible</span>
+            {% elif registro.estado_anterior == 'prestado' %}
+            <span style="color: orange;">Prestado</span>
+            {% elif registro.estado_anterior == 'nuevo' %}
+            <span style="color: blue;">Nuevo</span>
+            {% else %}
+            {{ registro.estado_anterior }}
+            {% endif %}
+        </td>
+        <td>
+            {% if registro.estado_nuevo == 'disponible' %}
+            <span style="color: green;">Disponible</span>
+            {% elif registro.estado_nuevo == 'prestado' %}
+            <span style="color: orange;">Prestado</span>
+            {% elif registro.estado_nuevo == 'eliminado' %}
+            <span style="color: red;">Eliminado</span>
+            {% else %}
+            {{ registro.estado_nuevo }}
+            {% endif %}
+        </td>
+        {% if session.tipo_usuario == 'admin' %}
+        <td>{{ registro.usuario_nombre or 'Sistema' }}</td>
+        {% endif %}
+        <td>{{ registro.motivo }}</td>
+        <td>{{ registro.fecha_cambio }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h3>Resumen del Historial</h3>
+<div>
+    <p><strong>Total de registros:</strong> {{ historial|length }}</p>
+    {% if session.tipo_usuario == 'admin' %}
+    <p><strong>Cambios por estado:</strong></p>
+    <ul>
+        <li><strong>Préstamos:</strong> {{ historial|selectattr('estado_nuevo', 'equalto', 'prestado')|list|length }}</li>
+        <li><strong>Devoluciones:</strong> {{ historial|selectattr('estado_nuevo', 'equalto', 'disponible')|list|length }}</li>
+        <li><strong>Creaciones:</strong> {{ historial|selectattr('estado_anterior', 'equalto', 'nuevo')|list|length }}</li>
+    </ul>
+    {% endif %}
+</div>
+
+{% else %}
+<p>No hay registros de historial disponibles.</p>
+{% if session.tipo_usuario != 'admin' %}
+<p><strong>Nota:</strong> El historial personal se genera cuando realizas préstamos y devoluciones.</p>
+{% endif %}
+{% endif %}
+
+{% if session.tipo_usuario == 'admin' %}
+<h3>Información Adicional</h3>
+<div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px;">
+    <p><strong>Como administrador puedes:</strong></p>
+    <ul>
+        <li>Ver el historial completo del sistema</li>
+        <li>Monitorear todos los cambios de estado</li>
+        <li>Identificar patrones de uso</li>
+        <li>Supervisar todas las operaciones</li>
+    </ul>
+</div>
+{% endif %}
+{% endblock %}
